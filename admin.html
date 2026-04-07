@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MailCraft AI — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:'Bricolage Grotesque',sans-serif;background:#0f0f0e;color:#e8e8e4;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+:root{
+  --bg:#0f0f0e;
+  --bg2:#1a1a18;
+  --bg3:#242420;
+  --border:rgba(255,255,255,.08);
+  --border2:rgba(255,255,255,.14);
+  --lime:#c8f04a;
+  --lime-d:#a8d030;
+  --lime-dim:#7a9a1e;
+  --white:#ffffff;
+  --ink3:rgba(255,255,255,.4);
+  --red:#ff4444;
+  --green:#22c55e;
+  --radius:10px;
+  --radius-lg:16px;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── LAYOUT ── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:240px;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:10;
+}
+.main{margin-left:240px;min-height:100vh;padding:40px 48px}
+
+/* ── SIDEBAR ── */
+.sidebar-logo{
+  padding:24px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--lime);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:17px;height:17px;fill:var(--bg)}
+.logo-name{font-size:15px;font-weight:700;letter-spacing:-.02em}
+.logo-sub{font-size:11px;color:var(--ink3);margin-top:1px}
+
+.nav-section{padding:16px 12px 8px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;margin:2px 8px;
+  font-size:14px;font-weight:500;color:var(--ink3);cursor:pointer;
+  transition:all .15s;text-decoration:none;
+}
+.nav-item:hover,.nav-item.active{background:var(--bg3);color:var(--white)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.6}
+.nav-item.active svg{opacity:1}
+
+.sidebar-status{
+  margin-top:auto;padding:16px;border-top:1px solid var(--border);
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:6px}
+.status-dot.ok{background:var(--green)}
+.status-text{font-size:12px;color:var(--ink3)}
+
+/* ── MAIN CONTENT ── */
+.page{display:none;animation:fadeUp .4s ease both}
+.page.active{display:block}
+
+.page-header{margin-bottom:36px}
+.page-title{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--ink3);line-height:1.6}
+
+/* ── CARDS ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;
+}
+.card-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-sub{font-size:13px;color:var(--ink3);margin-bottom:24px;line-height:1.55}
+
+/* ── FORM ELEMENTS ── */
+.field{margin-bottom:20px}
+.label{display:block;font-size:12px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input{
+  width:100%;background:var(--bg3);border:1.5px solid var(--border2);
+  border-radius:var(--radius);padding:11px 14px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--white);
+  outline:none;transition:border-color .2s;
+}
+.input:focus{border-color:var(--lime-d)}
+.input.plain{font-family:'Bricolage Grotesque',sans-serif}
+.input::placeholder{color:rgba(255,255,255,.2)}
+.input-eye{
+  position:absolute;right:12px;cursor:pointer;color:var(--ink3);
+  transition:color .15s;background:none;border:none;padding:4px;
+}
+.input-eye:hover{color:var(--white)}
+.input-eye svg{width:16px;height:16px}
+select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer}
+select.input option{background:var(--bg3)}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;
+  border:none;cursor:pointer;transition:all .2s;font-family:'Bricolage Grotesque',sans-serif;
+}
+.btn-lime{background:var(--lime);color:#0f0f0e}
+.btn-lime:hover{background:var(--lime-d);transform:translateY(-1px)}
+.btn-ghost{background:var(--bg3);color:var(--white);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+.btn-red{background:rgba(255,68,68,.15);color:var(--red);border:1px solid rgba(255,68,68,.25)}
+.btn-red:hover{background:rgba(255,68,68,.25)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn svg{width:15px;height:15px}
+.btn-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ── ALERTS ── */
+.alert{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:13px 16px;border-radius:var(--radius);font-size:13px;line-height:1.55;margin-top:16px;
+}
+.alert-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80}
+.alert-error{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.25);color:#ff8080}
+.alert-info{background:rgba(200,240,74,.08);border:1px solid rgba(200,240,74,.2);color:var(--lime)}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ── STATUS GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+.stat-val{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.stat-val.green{color:var(--green)}
+.stat-val.red{color:var(--red)}
+.stat-val.lime{color:var(--lime)}
+.stat-lbl{font-size:12px;color:var(--ink3)}
+
+/* ── CODE BLOCK ── */
+.code{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  color:#a8d8a8;line-height:1.7;overflow-x:auto;white-space:pre;
+}
+.code .comment{color:rgba(255,255,255,.3)}
+.code .key{color:#79c0ff}
+.code .val{color:#a8d8a8}
+.code .str{color:#ffa657}
+
+/* ── TABLE ── */
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);border-bottom:1px solid var(--border)}
+.table td{padding:12px 14px;border-bottom:1px solid var(--border);color:rgba(255,255,255,.7)}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:rgba(255,255,255,.02)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(34,197,94,.15);color:#4ade80}
+.badge-red{background:rgba(255,68,68,.15);color:#ff8080}
+.badge-gray{background:rgba(255,255,255,.08);color:var(--ink3)}
+
+/* ── SPINNER ── */
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite}
+
+/* ── LOGIN SCREEN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:40px;width:100%;max-width:380px;animation:fadeUp .4s ease}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--ink3);margin-bottom:28px}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0;padding:24px 20px}
+  .stat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="login-wrap" id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/></svg></div>
+      <div><div style="font-size:15px;font-weight:700">MailCraft AI</div><div style="font-size:11px;color:var(--ink3)">Admin Panel</div></div>
+    </div>
+    <div class="login-title">Welcome back 👋</div>
+    <div class="login-sub">Enter your admin password to access the control panel.</div>
+    <div id="login-err" style="display:none" class="alert alert-error"><span class="alert-icon">✕</span><span id="login-err-msg">Wrong password</span></div>
+    <div class="field" style="margin-top:16px">
+      <label class="label">Admin Password</label>
+      <div class="input-wrap">
+        <input class="input" type="password" id="login-pass" placeholder="Enter password…" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="input-eye" onclick="togglePass('login-pass',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-lime" style="width:100%;justify-content:center" onclick="doLogin()">Sign in →</button>
+    <p style="font-size:12px;color:var(--ink3);margin-top:16px;text-align:center">Default password: <span style="font-family:'JetBrains Mono',monospace;color:var(--lime)">mailcraft2024</span><br>Change via ADMIN_PASSWORD env var</p>
+  </div>
+</div>
+
+<!-- ── ADMIN APP ── -->
+<div id="admin-app" style="display:none">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/></svg></div>
+      <div>
+        <div class="logo-name">MailCraft AI</div>
+        <div class="logo-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <div class="nav-section">Menu</div>
+    <a class="nav-item active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" onclick="showPage('api-config',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      API Configuration
+    </a>
+    <a class="nav-item" onclick="showPage('settings',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41"/></svg>
+      Settings
+    </a>
+    <a class="nav-item" onclick="showPage('docs',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Docs & Help
+    </a>
+
+    <div class="sidebar-status" id="sidebar-status">
+      <div style="display:flex;align-items:center;margin-bottom:4px">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="status-text" id="status-text">Checking…</span>
+      </div>
+      <div style="font-size:11px;color:var(--ink3)" id="status-model">Model: —</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Overview of your MailCraft AI backend.</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="d-api-status" style="font-size:18px;margin-bottom:6px">Checking…</div>
+          <div class="stat-lbl">API Key Status</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val lime" id="d-model">—</div>
+          <div class="stat-lbl">Active Model</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="d-server" style="font-size:18px;margin-bottom:6px">—</div>
+          <div class="stat-lbl">Server</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Quick Actions
+        </div>
+        <div class="card-sub">Test your API connection or jump to configuration.</div>
+        <div class="btn-row">
+          <button class="btn btn-lime" onclick="testApi()" id="test-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Test API Connection
+          </button>
+          <button class="btn btn-ghost" onclick="showPage('api-config', document.querySelector('.nav-item:nth-child(2)'))">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Configure API Key
+          </button>
+          <button class="btn btn-ghost" onclick="loadDashboard()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Refresh
+          </button>
+        </div>
+        <div id="test-result" style="display:none"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">API Endpoint</div>
+        <div class="card-sub">Your frontend should point to this URL to generate emails.</div>
+        <div class="code" id="endpoint-display">Loading…</div>
+      </div>
+    </div>
+
+    <!-- ── API CONFIG ── -->
+    <div class="page" id="page-api-config">
+      <div class="page-header">
+        <div class="page-title">🔑 API Configuration</div>
+        <div class="page-sub">Set your Anthropic API key here. It will be used for all email generation requests.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Anthropic API Key</div>
+        <div class="card-sub">Get your API key from <strong style="color:var(--lime)">console.anthropic.com</strong> → API Keys → Create Key.</div>
+
+        <div class="field">
+          <label class="label">API Key</label>
+          <div class="input-wrap">
+            <input class="input" type="password" id="api-key-input" placeholder="sk-ant-api03-…" autocomplete="off">
+            <button class="input-eye" onclick="togglePass('api-key-input',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div style="font-size:12px;color:var(--ink3);margin-top:6px">Format: sk-ant-api03-… (starts with sk-ant-)</div>
+        </div>
+
+        <div id="current-key-info" style="margin-bottom:20px"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-lime" onclick="saveApiKey()" id="save-key-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save API Key
+          </button>
+          <button class="btn btn-ghost" onclick="testApi()">
+            Test Connection
+          </button>
+        </div>
+        <div id="save-result" style="display:none"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">How to get an Anthropic API Key</div>
+        <div class="card-sub">Follow these steps:</div>
+        <table class="table">
+          <tr><td style="width:36px;color:var(--lime);font-weight:700">1</td><td>Go to <strong>console.anthropic.com</strong></td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">2</td><td>Create an account or sign in</td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">3</td><td>Click <strong>API Keys</strong> in the left menu</td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">4</td><td>Click <strong>Create Key</strong> → copy the key</td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">5</td><td>Paste it in the field above and click Save</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div class="page-title">⚙️ Settings</div>
+        <div class="page-sub">Configure model, token limits, and rate limiting.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Model & Generation</div>
+        <div class="card-sub">Choose which Claude model to use and how many tokens to generate.</div>
+
+        <div class="field">
+          <label class="label">Claude Model</label>
+          <select class="input plain" id="model-select">
+            <option value="claude-sonnet-4-20250514">Claude Sonnet 4 (Recommended ⚡)</option>
+            <option value="claude-opus-4-5-20251101">Claude Opus 4.5 (Most powerful)</option>
+            <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 (Fastest / cheapest)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Max Tokens (output length)</label>
+          <input class="input plain" type="number" id="max-tokens" value="1000" min="200" max="4096">
+          <div style="font-size:12px;color:var(--ink3);margin-top:6px">Recommended: 1000. Higher = longer emails but more cost.</div>
+        </div>
+
+        <div class="field">
+          <label class="label">Rate Limit (requests per 15 min per IP)</label>
+          <input class="input plain" type="number" id="rate-limit" value="20" min="5" max="100">
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-lime" onclick="saveSettings()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+            Save Settings
+          </button>
+        </div>
+        <div id="settings-result" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- ── DOCS ── -->
+    <div class="page" id="page-docs">
+      <div class="page-header">
+        <div class="page-title">📖 Docs & Help</div>
+        <div class="page-sub">How to connect your frontend and deploy this backend.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Connect Your Frontend</div>
+        <div class="card-sub">In your <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:12px">index.html</code>, change these two lines at the top of the script:</div>
+        <div class="code"><span class="comment">// Change these two values:</span>
+<span class="key">const</span> <span class="val">USE_BACKEND</span> = <span class="str">true</span>;
+<span class="key">const</span> <span class="val">BACKEND_URL</span> = <span class="str">'https://your-railway-url.railway.app'</span>;</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Deploy on Railway (Free)</div>
+        <div class="card-sub">Easiest way to host this backend online:</div>
+        <table class="table">
+          <tr><td style="width:36px;color:var(--lime);font-weight:700">1</td><td>Push this backend folder to GitHub</td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">2</td><td>Go to <strong>railway.app</strong> → New Project → Deploy from GitHub</td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">3</td><td>Add env variable: <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:12px">ANTHROPIC_API_KEY=sk-ant-…</code></td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">4</td><td>Add env variable: <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:12px">ADMIN_PASSWORD=your-secret</code></td></tr>
+          <tr><td style="color:var(--lime);font-weight:700">5</td><td>Railway auto-deploys — you get a public URL</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title">API Reference</div>
+        <div class="code"><span class="comment"># Generate email</span>
+<span class="key">POST</span> /api/generate
+
+<span class="comment"># Request body:</span>
+{
+  <span class="str">"prompt"</span>: <span class="val">"Write a proposal email..."</span>,
+  <span class="str">"tone"</span>:   <span class="val">"Professional"</span>,
+  <span class="str">"lang"</span>:   <span class="val">"English"</span>,
+  <span class="str">"emailType"</span>: <span class="val">"Business proposal"</span>
+}
+
+<span class="comment"># Response:</span>
+{
+  <span class="str">"success"</span>: <span class="val">true</span>,
+  <span class="str">"email"</span>: <span class="val">"Subject: ...\n\nDear..."</span>,
+  <span class="str">"usage"</span>: { <span class="str">"input_tokens"</span>: <span class="val">150</span>, <span class="str">"output_tokens"</span>: <span class="val">300</span> }
+}</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Sign Out</div>
+        <div class="card-sub">End your admin session.</div>
+        <button class="btn btn-red" onclick="doLogout()">Sign out</button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /admin-app -->
+
+<script>
+// ══════════════════════
+// CONFIG
+// ══════════════════════
+// This admin panel is served from the same server
+// so API calls go to the same origin
+const API = window.location.origin;
+let adminPwd = sessionStorage.getItem('mc_admin_pwd') || '';
+
+// ══════════════════════
+// LOGIN
+// ══════════════════════
+function init() {
+  if (adminPwd) {
+    showAdmin();
+  } else {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('admin-app').style.display = 'none';
+    setTimeout(() => document.getElementById('login-pass').focus(), 100);
+  }
+}
+
+async function doLogin() {
+  const pwd = document.getElementById('login-pass').value.trim();
+  if (!pwd) return;
+
+  // Test the password against the server
+  try {
+    const res = await fetch(`${API}/admin/config`, {
+      headers: { 'x-admin-password': pwd }
+    });
+    if (res.ok) {
+      adminPwd = pwd;
+      sessionStorage.setItem('mc_admin_pwd', pwd);
+      showAdmin();
+    } else {
+      const errEl = document.getElementById('login-err');
+      document.getElementById('login-err-msg').textContent = 'Wrong password. Try again.';
+      errEl.style.display = 'flex';
+    }
+  } catch (e) {
+    const errEl = document.getElementById('login-err');
+    document.getElementById('login-err-msg').textContent = 'Cannot connect to server.';
+    errEl.style.display = 'flex';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('mc_admin_pwd');
+  adminPwd = '';
+  document.getElementById('admin-app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pass').value = '';
+}
+
+function showAdmin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-app').style.display = 'block';
+  loadDashboard();
+  loadCurrentConfig();
+}
+
+// ══════════════════════
+// NAVIGATION
+// ══════════════════════
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ══════════════════════
+// DASHBOARD
+// ══════════════════════
+async function loadDashboard() {
+  try {
+    const res = await fetch(`${API}/health`);
+    const data = await res.json();
+
+    const apiSet = data.apiConfigured;
+    const statusEl = document.getElementById('d-api-status');
+    const dotEl = document.getElementById('status-dot');
+    const textEl = document.getElementById('status-text');
+
+    statusEl.textContent = apiSet ? '✅ Configured' : '❌ Not set';
+    statusEl.style.color = apiSet ? 'var(--green)' : 'var(--red)';
+    document.getElementById('d-model').textContent = data.model || '—';
+    document.getElementById('d-server').textContent = '🟢 Online';
+    document.getElementById('d-server').style.color = 'var(--green)';
+    dotEl.className = 'status-dot' + (apiSet ? ' ok' : '');
+    textEl.textContent = apiSet ? 'API ready' : 'API not set';
+    document.getElementById('status-model').textContent = 'Model: ' + (data.model || '—');
+    document.getElementById('endpoint-display').textContent = `POST ${API}/api/generate`;
+  } catch (e) {
+    document.getElementById('d-server').textContent = '🔴 Offline';
+    document.getElementById('d-server').style.color = 'var(--red)';
+  }
+}
+
+// ══════════════════════
+// API KEY
+// ══════════════════════
+async function loadCurrentConfig() {
+  try {
+    const res = await fetch(`${API}/admin/config`, { headers: { 'x-admin-password': adminPwd } });
+    const data = await res.json();
+    const infoEl = document.getElementById('current-key-info');
+    if (data.apiKeySet) {
+      infoEl.innerHTML = `<div class="alert alert-success"><span class="alert-icon">✅</span><span>API key is set: <code style="font-family:'JetBrains Mono',monospace">${data.anthropicApiKey}</code></span></div>`;
+    } else {
+      infoEl.innerHTML = `<div class="alert alert-error"><span class="alert-icon">⚠️</span><span>No API key configured yet. Enter one below.</span></div>`;
+    }
+    // Fill settings
+    if (data.model) document.getElementById('model-select').value = data.model;
+    if (data.maxTokens) document.getElementById('max-tokens').value = data.maxTokens;
+    if (data.rateLimit) document.getElementById('rate-limit').value = data.rateLimit;
+  } catch (e) {}
+}
+
+async function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  const resultEl = document.getElementById('save-result');
+  resultEl.style.display = 'none';
+
+  if (!key) { showResult(resultEl, 'error', 'Please enter an API key.'); return; }
+  if (!key.startsWith('sk-ant-')) { showResult(resultEl, 'error', 'Invalid format. Key must start with sk-ant-'); return; }
+
+  const btn = document.getElementById('save-key-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+  try {
+    const res = await fetch(`${API}/admin/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd },
+      body: JSON.stringify({ anthropicApiKey: key })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showResult(resultEl, 'success', '✅ API key saved! Testing connection…');
+      document.getElementById('api-key-input').value = '';
+      await loadCurrentConfig();
+      await loadDashboard();
+      // Auto-test
+      setTimeout(() => testApi(), 800);
+    } else {
+      showResult(resultEl, 'error', data.error || 'Failed to save.');
+    }
+  } catch (e) {
+    showResult(resultEl, 'error', 'Server connection failed.');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save API Key';
+}
+
+async function testApi() {
+  const resultEl = document.getElementById('test-result');
+  const btn = document.getElementById('test-btn');
+  resultEl.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Testing…';
+
+  try {
+    const res = await fetch(`${API}/admin/test`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd },
+      body: JSON.stringify({})
+    });
+    const data = await res.json();
+    if (data.success) {
+      showResult(resultEl, 'success', `✅ API working! Claude responded: "${data.response}"`);
+    } else {
+      showResult(resultEl, 'error', '❌ ' + (data.error || 'Test failed'));
+    }
+  } catch (e) {
+    showResult(resultEl, 'error', '❌ Cannot connect to server.');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Test API Connection';
+}
+
+async function saveSettings() {
+  const resultEl = document.getElementById('settings-result');
+  resultEl.style.display = 'none';
+  try {
+    const res = await fetch(`${API}/admin/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd },
+      body: JSON.stringify({
+        model: document.getElementById('model-select').value,
+        maxTokens: parseInt(document.getElementById('max-tokens').value),
+        rateLimit: parseInt(document.getElementById('rate-limit').value),
+      })
+    });
+    const data = await res.json();
+    if (res.ok) { showResult(resultEl, 'success', '✅ Settings saved!'); await loadDashboard(); }
+    else showResult(resultEl, 'error', data.error || 'Failed.');
+  } catch (e) { showResult(resultEl, 'error', 'Server connection failed.'); }
+}
+
+// ══════════════════════
+// UTILS
+// ══════════════════════
+function showResult(el, type, msg) {
+  el.className = 'alert alert-' + (type === 'success' ? 'success' : 'error');
+  el.innerHTML = `<span class="alert-icon">${type === 'success' ? '✅' : '❌'}</span><span>${msg}</span>`;
+  el.style.display = 'flex';
+}
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+// ══════════════════════
+// INIT
+// ══════════════════════
+init();
+</script>
+</body>
+</html>
