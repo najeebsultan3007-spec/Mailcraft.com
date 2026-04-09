@@ -8,7 +8,7 @@ const rateLimit = require('express-rate-limit');
 const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
-
+app.set('trust proxy', 1);
 let config = {
   anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
   model: process.env.MODEL || 'claude-sonnet-4-20250514',
