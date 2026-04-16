@@ -1018,7 +1018,7 @@ async function generateEmail() {
     const res = await fetch(BACKEND_URL + '/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-      body: JSON.stringify({ prompt, tone, lang, emailType })
+      body: JSON.stringify({ prompt, tone, lang, emailType, length })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Server error');
