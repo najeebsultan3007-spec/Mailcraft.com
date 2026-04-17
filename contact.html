@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — MailCraft AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Lora:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'Bricolage Grotesque',sans-serif;background:#fafaf8;color:#1a1a18;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:#7a9a1e}
+a:hover{text-decoration:underline}
+button{cursor:pointer;font-family:inherit;border:none;outline:none}
+:root{--bg:#fafaf8;--bg2:#f3f3ef;--ink:#1a1a18;--ink2:#3d3d38;--ink3:#6b6b64;--lime:#c8f04a;--lime-d:#a8d030;--lime-dim:#7a9a1e;--border:rgba(26,26,24,.1);--border2:rgba(26,26,24,.18)}
+.page-nav{position:sticky;top:0;z-index:100;background:rgba(250,250,248,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 20px}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:17px;height:17px;fill:var(--lime)}
+.logo span{color:var(--lime-dim)}
+.back-link{font-size:14px;color:var(--ink3);display:inline-flex;align-items:center;gap:6px}
+.back-link:hover{color:var(--ink);text-decoration:none}
+.container{max-width:640px;margin:0 auto;padding:60px 24px 100px;text-align:center}
+h1{font-size:48px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:16px}
+.lead{font-family:'Lora',serif;font-size:19px;line-height:1.65;color:var(--ink2);margin-bottom:48px}
+.contact-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:40px 32px;margin-bottom:20px;box-shadow:0 4px 20px rgba(26,26,24,.05);text-align:left}
+.contact-icon{font-size:32px;margin-bottom:12px}
+.contact-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.contact-desc{font-family:'Lora',serif;font-size:16px;color:var(--ink3);line-height:1.6;margin-bottom:16px}
+.contact-link{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:600;transition:all .2s}
+.contact-link:hover{background:var(--ink2);transform:translateY(-1px);text-decoration:none;color:#fff}
+.contact-link.light{background:#fff;color:var(--ink);border:1.5px solid var(--border2)}
+.contact-link.light:hover{background:var(--bg2)}
+.faq-note{font-family:'Lora',serif;font-size:15px;color:var(--ink3);margin-top:32px;padding:20px;background:var(--bg2);border-radius:12px}
+.form-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:32px;text-align:left;box-shadow:0 4px 20px rgba(26,26,24,.05);margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px}
+.form-input,.form-textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border2);border-radius:10px;font-size:15px;font-family:inherit;background:var(--bg);color:var(--ink);transition:all .15s}
+.form-input:focus,.form-textarea:focus{outline:none;border-color:var(--lime-d);box-shadow:0 0 0 3px rgba(200,240,74,.15)}
+.form-textarea{min-height:140px;resize:vertical;font-family:'Lora',serif}
+.form-submit{background:var(--ink);color:#fff;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:600;width:100%;transition:all .2s}
+.form-submit:hover{background:var(--ink2);transform:translateY(-1px)}
+.form-msg{text-align:center;padding:14px;border-radius:10px;margin-top:12px;font-size:14px;display:none}
+.form-msg.success{background:rgba(200,240,74,.2);color:var(--lime-dim);display:block}
+@media(max-width:640px){h1{font-size:36px}.lead{font-size:17px}.contact-card,.form-card{padding:28px 20px}}
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5V8z"/></svg></div>
+      Mail<span>Craft</span> AI
+    </a>
+    <a href="index.html" class="back-link">← Back to home</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Let's talk</h1>
+  <p class="lead">Questions, feedback, bug reports, feature requests — we read and reply to every message. Usually within 24 hours.</p>
+
+  <div class="contact-card">
+    <div class="contact-icon">✉️</div>
+    <div class="contact-title">Email us</div>
+    <p class="contact-desc">For support, billing questions, partnership inquiries, or anything else — just drop us an email. We genuinely reply.</p>
+    <a href="mailto:hello@mailcraft-com.vercel.app" class="contact-link">
+      hello@mailcraft-com.vercel.app
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <div class="form-card">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="contact-icon">💬</div>
+      <div class="contact-title">Send a message</div>
+      <p class="contact-desc" style="margin-bottom:0">Prefer a quick form? Fill this out and we'll get back to you.</p>
+    </div>
+    <form id="contact-form" onsubmit="handleContactSubmit(event)">
+      <div class="form-group">
+        <label class="form-label" for="c-name">Your name</label>
+        <input id="c-name" class="form-input" type="text" required placeholder="Ahmed Khan">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="c-email">Your email</label>
+        <input id="c-email" class="form-input" type="email" required placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="c-message">Message</label>
+        <textarea id="c-message" class="form-textarea" required placeholder="How can we help?"></textarea>
+      </div>
+      <button type="submit" class="form-submit">Send message →</button>
+      <div id="form-msg" class="form-msg"></div>
+    </form>
+  </div>
+
+  <div class="faq-note">
+    Have a question that might already be answered? Check our <a href="index.html#faq">FAQ section</a> for quick answers about pricing, privacy, and how the tool works.
+  </div>
+</div>
+
+<script>
+function handleContactSubmit(e){
+  e.preventDefault();
+  var name = document.getElementById('c-name').value;
+  var email = document.getElementById('c-email').value;
+  var message = document.getElementById('c-message').value;
+  var subject = encodeURIComponent('MailCraft contact: ' + name);
+  var body = encodeURIComponent('From: ' + name + ' (' + email + ')\n\n' + message);
+  window.location.href = 'mailto:hello@mailcraft-com.vercel.app?subject=' + subject + '&body=' + body;
+  var msgEl = document.getElementById('form-msg');
+  msgEl.className = 'form-msg success';
+  msgEl.textContent = '✓ Opening your email client... If it doesn\'t open, just email us directly at hello@mailcraft-com.vercel.app';
+}
+</script>
+
+</body>
+</html>
